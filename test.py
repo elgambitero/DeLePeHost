@@ -11,4 +11,4 @@ def printProcess():
     sunrise.buildPrint()
 
 
-print(sunrise.Zaxis.moveAxis(50, 200, relative=True))
+sunrise.Zaxis.move(-30, 200, relative=True)

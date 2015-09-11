@@ -20,14 +20,11 @@ class SerialConnection():
         self.serial.port = port
         self.serial.baudrate = 115200
         self.serial.open()
-    	self.changeBaudRate(115200)
-    	self.write('$$')
-    	while 1:
-            data = self.getData()
-            if data is not None and 'Grbl 0.9j' in data:
-                break
-
-
+        self.changeBaudRate(115200)
+        self.write('$\n\r')
+        self.wakeUp()
+        
+        
 
     def getData(self):
         if self.serial.isOpen():
@@ -50,3 +47,10 @@ class SerialConnection():
 
     def close(self):
         self.serial.close()
+
+    def wakeUp(self):
+    	while 1:
+            data = self.getData()
+            if data is not None and 'Grbl 0.9j' in data:
+            	print(data)
+                break
