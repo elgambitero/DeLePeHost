@@ -18,5 +18,3 @@ from mechComm import mechComm
 
 mio=mechComm()
 print(mio.myport)
-mio.write("$\n\r")
-mio.getData()
