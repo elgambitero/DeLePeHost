@@ -23,11 +23,11 @@ class mechComm():
         for port in ports:
         #try:
             self.serial = serial.Serial(port, 115200, timeout=2)
-            time.sleep(4)
-            self.serial.flush()
             if self.serial.isOpen():
                 print(">>> Found "+ port+ " open...")
                 self._reset()
+                print self.getData()
+                print self.getData()
                 self.version = self.getData()
                 if self.version is not None:
                     print(self.version)
@@ -42,8 +42,7 @@ class mechComm():
             #    self.serial.close()
         #except:
         #    pass
-        if self.myport=='error':
-            print(">>> Could not find GRBL controller")
+        if self.myport=='error':            print(">>> Could not find GRBL controller")
         return
 
     def getData(self):
