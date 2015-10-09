@@ -24,20 +24,15 @@ class mechComm():
         #try:
             self.serial = serial.Serial(port, 115200, timeout=2)
             time.sleep(4)
-            self.serial.flush()
             if self.serial.isOpen():
                 print(">>> Found "+ port+ " open...")
-                self._reset()
+                self.serial.write("\x18\n\r")
+                time.sleep(4)
                 self.version = self.getData()
-                if self.version is not None:
-                    print(self.version)
-                    break
-                '''
-                if version == "Grbl 0.9j ['$' for help]":
+                if "Grbl 0.9j ['$' for help]" in self.version:
                     self.myport=port
                     print(">>> Success!")
                     break
-                    '''
             #else:
             #    self.serial.close()
         #except:
@@ -49,13 +44,10 @@ class mechComm():
     def getData(self):
         if self.serial.isOpen():
             out = ''
-            try:
-                while self.serial.inWaiting() > 0:
-                    out += self.serial.read(1)
-                    if out != '':
-                        return out
-            except:
-                return out
+            while self.serial.inWaiting() > 0:
+                out += self.serial.read(1)
+        return out
+
 
     def write(self,string):
         self.serial.write(string)
