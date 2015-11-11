@@ -10,7 +10,7 @@ import serial
 import glob
 import time
 
-class MechComm(serial):
+class MechComm(serial.Serial):
 
     def __init__(self):
         self.myport='error'
@@ -22,12 +22,13 @@ class MechComm(serial):
         print(">>> Finding a valid GRBL controller board...")
         print(ports)
         for port in ports:
-            super(mechComm,self).__init__(port, 115200, timeout=2)
-            time.sleep(4)
+            super(MechComm,self).__init__(port, 115200, timeout=2)
+            self._ctrlXReset()
+            time.sleep(1)
             self.version = self.getData()
             if "Grbl 0.9j ['$' for help]" in self.version:
                 self.myport=port
-                print(">>> Success!")
+                print(">>> Success! GRBL Board found at port: "+port)
                 self.connected=True
                 break
         if self.myport=='error':
@@ -42,7 +43,7 @@ class MechComm(serial):
                 out += self.read(1)
         return out
 
-    def _reset(self):
+    def _DTRReset(self):
         self.setDTR(False)
         time.sleep(0.022)
         self.flushInput()
@@ -50,17 +51,20 @@ class MechComm(serial):
         self.setDTR(True)
         #self.getData()
 
+    def _ctrlXReset(self):
+        self.write("\x18\r\n")
+
     def moveAxis(self,axis,distance,speed):
         if self.connected:
             self.write("G91\n\r" + "G1 " + axis + str(distance) + " F" +
                 str(speed) + "\n\r")
-        else
+        else:
             print("Err: controller not connected")
 
     def homeAxis(self):
         if self.connected:
             self.write("$H\n\r")
-        else
+        else:
             print("Err: controller not connected")
         return False
 
@@ -77,8 +81,8 @@ class MechComm(serial):
         return True
 
     def wakeUp(self):
-    	while 1:
+        while 1:
             data = self.getData()
             if data is not None and 'Grbl 0.9j' in data:
-            	print(data)
+                print(data)
                 break

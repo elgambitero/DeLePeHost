@@ -13,7 +13,7 @@
 
 #sunrise.Zaxis.move(-30, 200, relative=True)
 
-from MechComm import MechComm
+from sunrise.MechComm import MechComm
 
 mio=MechComm()
 print(mio.myport)
