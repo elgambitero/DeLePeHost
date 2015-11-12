@@ -9,9 +9,9 @@ class Projector(object):
         self._resolution = resolution
 
         #It's able to print in these pixel ranges.
-        self._pixel_sizes = pixelSizes;
+        self._pixel_sizes = pixel_sizes;
 
-        if type(ProjAxis)==str:
+        if type(proj_axis)==str:
             self._proj_axis = proj_axis
 
 
