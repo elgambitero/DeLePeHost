@@ -10,10 +10,11 @@ import serial
 import glob
 import time
 
-class mechComm():
+class mechComm(serial):
 
     def __init__(self):
         self.myport='error'
+        self.connected=False
         ports=[]
         for device in ['/dev/ttyAMA*','/dev/ttyACM*', '/dev/ttyUSB*', '/dev/tty.usb*', '/dev/tty.wchusb*',
                            '/dev/cu.*', '/dev/rfcomm*']:
@@ -21,41 +22,35 @@ class mechComm():
         print(">>> Finding a valid GRBL controller board...")
         print(ports)
         for port in ports:
-        #try:
-            self.serial = serial.Serial(port, 115200, timeout=2)
+            super(mechComm,self).__init__(port, 115200, timeout=2)
             time.sleep(4)
-            if self.serial.isOpen():
-                print(">>> Found "+ port+ " open...")
-                self.serial.write("\x18\n\r")
-                time.sleep(4)
-                self.version = self.getData()
-                if "Grbl 0.9j ['$' for help]" in self.version:
-                    self.myport=port
-                    print(">>> Success!")
-                    break
-            #else:
-            #    self.serial.close()
-        #except:
-        #    pass
+            self.version = self.getData()
+            if "Grbl 0.9j ['$' for help]" in self.version:
+                self.myport=port
+                print(">>> Success!")
+                self.connected=True
+                break
         if self.myport=='error':
             print(">>> Could not find GRBL controller")
         return
 
     def getData(self):
-        if self.serial.isOpen():
+        if self.isOpen():
             out = ''
-            while self.serial.inWaiting() > 0:
-                out += self.serial.read(1)
+            while self.inWaiting() > 0:
+                out += self.read(1)
         return out
 
-
-    def write(self,string):
-        self.serial.write(string)
-
     def _reset(self):
-        self.serial.setDTR(False)
+        self.setDTR(False)
         time.sleep(0.022)
-        self.serial.flushInput()
-        self.serial.flushOutput()
-        self.serial.setDTR(True)
+        self.flushInput()
+        self.flushOutput()
+        self.setDTR(True)
         #self.getData()
+
+    def moveAxis(self,axis,distance,speed):
+        if self.connected is True:
+            self.write("G91\n\r" + "G1 " + axis + str(distance) + " F" + str(speed))
+        else
+            print("Err: controller not connected")
