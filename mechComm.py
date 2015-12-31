@@ -10,14 +10,14 @@ import serial
 import glob
 import time
 
-class mechComm(serial):
+class MechComm(serial):
 
     def __init__(self):
         self.myport='error'
         self.connected=False
         ports=[]
-        for device in ['/dev/ttyAMA*','/dev/ttyACM*', '/dev/ttyUSB*', '/dev/tty.usb*', '/dev/tty.wchusb*',
-                           '/dev/cu.*', '/dev/rfcomm*']:
+        for device in ['/dev/ttyAMA*','/dev/ttyACM*', '/dev/ttyUSB*',
+            '/dev/tty.usb*', '/dev/tty.wchusb*','/dev/cu.*', '/dev/rfcomm*']:
             ports = ports + glob.glob(device)
         print(">>> Finding a valid GRBL controller board...")
         print(ports)
@@ -34,6 +34,7 @@ class mechComm(serial):
             print(">>> Could not find GRBL controller")
         return
 
+#Courtesy of Irene Sanz Nieto <irene.sanz@bq.com> from web2board project
     def getData(self):
         if self.isOpen():
             out = ''
@@ -50,7 +51,34 @@ class mechComm(serial):
         #self.getData()
 
     def moveAxis(self,axis,distance,speed):
-        if self.connected is True:
-            self.write("G91\n\r" + "G1 " + axis + str(distance) + " F" + str(speed))
+        if self.connected:
+            self.write("G91\n\r" + "G1 " + axis + str(distance) + " F" +
+                str(speed) + "\n\r")
         else
             print("Err: controller not connected")
+
+    def homeAxis(self):
+        if self.connected:
+            self.write("$H\n\r")
+        else
+            print("Err: controller not connected")
+        return False
+
+    def setStepsPermm(self, axis, steps):
+        if axis == 'X':
+            code = 100
+        elif axis == 'Y':
+            code = 101
+        elif axis == 'Z':
+            code = 102
+        else:
+            return False
+        self.write('$'+str(code)+'='+str(steps)+'\n')
+        return True
+
+    def wakeUp(self):
+    	while 1:
+            data = self.getData()
+            if data is not None and 'Grbl 0.9j' in data:
+            	print(data)
+                break
