@@ -43,13 +43,15 @@ def sliceFile(name='name', content='content'):
         os.mkdir('temp')
     except Exception:
         pass
-    temp_stl_path=os.path.join('temp','loaded.stl')
+    temp_stl_path=os.path.join(os.getcwd(),'temp','loaded.stl')
     print temp_stl_path
     with open(temp_stl_path, 'w') as file_:
         file_.write(base64.b64decode(content))
+        print "wewe"
         sunrise.slicer.file_to_svg(temp_stl_path,50)
-    response = name + " successfully sliced"
-    return response
+        response = name + " successfully sliced"
+        return response
+
 
 
 run(host='0.0.0.0', webserver=True)
