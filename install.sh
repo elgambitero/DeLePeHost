@@ -20,4 +20,4 @@ sudo apt-get install slic3r
 sudo mkdir /opt/sunrise
 sudo cp -r ./src/* /opt/sunrise/
 
-sudo sed -i -e '$i \python /opt/sunrise/sunrise_server.py \n' /etc/rc.local
+sudo sed -i -e '$i \sudo chmod 777 "/dev/ttyAMA0"\n\r /usr/bin/python /opt/sunrise/sunrise_server.py \n' ~/.config/lxsession/LXDE-pi/autostart
