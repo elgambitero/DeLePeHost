@@ -14,9 +14,10 @@ sudo pip install pyrainbow
 
 sudo apt-get install slic3r
 
+#Uninstall old Sunrise server
+sudo rm -r /opt/sunrise
 
-#Install the Sunrise server
-
+#Install current Sunrise server
 sudo mkdir /opt/sunrise
 sudo cp -r ./src/* /opt/sunrise/
 
