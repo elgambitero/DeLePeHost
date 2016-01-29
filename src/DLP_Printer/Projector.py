@@ -39,4 +39,5 @@ class Projector(object):
         frame.SetBackgroundColour("black")
         frame.ShowFullscreen(True)
         frame.Show(True)
+        cursor = wx.StockCursor(wx.CURSOR_BLANK) 
         app.MainLoop()
