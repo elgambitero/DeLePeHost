@@ -1,22 +1,19 @@
 import MechComm
 import wx
 import subprocess
+import threading
 import time
 
 class Projector(object):
 
-    def __init__(self, resolution, pixel_sizes, proj_axis, MechComm):
-
-        #Projector has said resolution:
-
-        self._resolution = resolution
-
+    def __init__(self, pixel_sizes, proj_axis, MechComm):
         #It's able to print in these pixel ranges.
         self._pixel_sizes = pixel_sizes;
 
-        if type(proj_axis)==str:
-            self._proj_axis = proj_axis
+        #Has, or not, an axis that controls it's distance to the VAT
+        self._proj_axis = proj_axis
 
+        #Start controlling the display
         self.start_display()
 
 
@@ -30,14 +27,15 @@ class Projector(object):
         return False
 
     def start_display(self):
-        print "Iniciando server X"
-        #subprocess.Popen("startx",shell=True)
-        time.sleep(8)
         print "Iniciando App wx"
         app=wx.App()
+        self.resolution = wx.GetDisplaySize()
         frame=wx.Frame(None,wx.ID_ANY,"proyector")
         frame.SetBackgroundColour("black")
-        frame.ShowFullscreen(True)
+        frame.ShowFullScreen(True)
         frame.Show(True)
-        cursor = wx.StockCursor(wx.CURSOR_BLANK) 
-        app.MainLoop()
+        cursor = wx.StockCursor(wx.CURSOR_BLANK)
+        frame.SetCursor(cursor)
+        self.thread = threading.Thread(target=app.MainLoop)
+        self.thread.setDaemon(1)
+        self.thread.start()

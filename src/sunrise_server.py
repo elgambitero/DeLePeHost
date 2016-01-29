@@ -4,18 +4,12 @@ from rainbow import register, publish, run
 from DLP_Printer.DLP_Printer import DLP_Printer
 import os.path
 
-sunrise=DLP_Printer()
-try:
-    os.rmdir("./temp")
-except:
-    pass
-
-import base64
 
 
 @register
 def save_file(name='name', content='content'):
     with open(name, 'w') as file_:
+        import base64
         file_.write(base64.b64decode(content))
         return "OK"
 
@@ -53,5 +47,11 @@ def sliceFile(name='name', content='content'):
         return response
 
 
+if __name__ == '__main__':
+    sunrise=DLP_Printer()
+    try:
+        os.rmdir("./temp")
+    except:
+        pass
 
-run(host='0.0.0.0', webserver=True)
+    run(host='0.0.0.0', webserver=True)
