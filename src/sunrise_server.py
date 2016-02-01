@@ -41,7 +41,6 @@ def sliceFile(name='name', content='content'):
     print temp_stl_path
     with open(temp_stl_path, 'w') as file_:
         file_.write(base64.b64decode(content))
-        print "wewe"
         sunrise.slicer.file_to_svg(temp_stl_path,50)
         response = name + " successfully sliced"
         return response
@@ -53,5 +52,5 @@ if __name__ == '__main__':
         os.rmdir("./temp")
     except:
         pass
-
+    
     run(host='0.0.0.0', webserver=True)
