@@ -1,2 +1,3 @@
-# Sunrise-sw
-This repo holds software interface experiments for Sunrise DLP 3D printer
+# DeLePe Host
+
+This repo aims to develop a modular standalone host for DLP 3D printers.
