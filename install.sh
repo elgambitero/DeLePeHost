@@ -21,4 +21,5 @@ sudo rm -r /opt/sunrise
 sudo mkdir /opt/sunrise
 sudo cp -r ./src/* /opt/sunrise/
 
-sudo sed -i -e '$i \sudo chmod 777 "/dev/ttyAMA0"\n\r /usr/bin/python /opt/sunrise/sunrise_server.py \n' ~/.config/lxsession/LXDE-pi/autostart
+#Put USER in dialout group
+sudo usermod -a -G dialout $USER
