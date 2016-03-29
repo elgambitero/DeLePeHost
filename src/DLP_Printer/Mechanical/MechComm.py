@@ -9,6 +9,7 @@ __license__ = 'GNU General Public License v2 http://www.gnu.org/licenses/gpl2.ht
 import serial
 import glob
 import time
+from rainbow import register
 
 class MechComm(serial.Serial):
 
@@ -54,12 +55,14 @@ class MechComm(serial.Serial):
     def _ctrlXReset(self):
         self.write("\x18\r\n")
 
-    def moveAxis(self,axis,distance,speed):
+    @register
+    def moveAxis(self,axis='Y',distance=0,speed=200):
         if self.connected:
             self.write("G91\n\r" + "G1 " + axis + str(distance) + " F" +
                 str(speed) + "\n\r")
+            return 'Moving ' axis ' axis by ' + str(distance) + ' mm.'
         else:
-            print("Err: controller not connected")
+            return "ERROR: board not connected"
 
     def homeAxis(self):
         if self.connected:
@@ -86,3 +89,12 @@ class MechComm(serial.Serial):
             if data is not None and 'Grbl 0.9j' in data:
                 print(data)
                 break
+
+    @register
+    def unlock():
+        self.write("$x\n\r")
+        answer = self.getData();
+        if "ok" in answer:
+            return "Alarm lock successfully released"
+        else:
+            return "ERROR: Communication could't be established with cnc board"
