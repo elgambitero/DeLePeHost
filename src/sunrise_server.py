@@ -41,6 +41,7 @@ def sliceFile(name='name', content='content'):
     temp_stl_path=os.path.join(os.getcwd(),'temp','loaded.stl')
     print temp_stl_path
     with open(temp_stl_path, 'w') as file_:
+        import base64
         file_.write(base64.b64decode(content))
         sunrise.slicer.file_to_svg(temp_stl_path,50)
         response = name + " successfully sliced"
@@ -53,11 +54,13 @@ def buildPrint():
     if not loaded:
         return "Print will not happen"
     else:
-        sunrise.buildPrint(os.path.join(os.getcwd(),'temp','loaded.svg'))
+        sunrise.buildPrint(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':20000,'blankTime':500})
 
 if __name__ == '__main__':
     sunrise=DLP_Printer()
-    global loaded=False
+    sunrise.projector.blank()
+    global loaded
+    loaded=False
     try:
         os.rmdir("./temp")
     except:
