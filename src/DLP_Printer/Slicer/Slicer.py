@@ -1,4 +1,5 @@
 import subprocess
+import xml.etree.ElementTree as ET
 
 
 class Slicer(object):
