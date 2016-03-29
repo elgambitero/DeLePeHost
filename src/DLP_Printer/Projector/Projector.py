@@ -29,7 +29,7 @@ class Projector(object):
         d.init()
         return
 
-    def expose(layer):
+    def expose(self,layer):
         d.expose(layer)
 
     def blank(self):

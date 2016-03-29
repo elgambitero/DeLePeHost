@@ -1,3 +1,4 @@
+
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -16,7 +17,8 @@ class Slicer(object):
         else:
             return False
 
-    def parseSVG(filename,pixelSize):
+    def parseSVG(self,filename):
+        print "Try to parse"
         tree = ET.parse(filename)
         root = tree.getroot()
         model=()

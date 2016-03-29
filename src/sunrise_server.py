@@ -46,15 +46,24 @@ def sliceFile(name='name', content='content'):
         sunrise.slicer.file_to_svg(temp_stl_path,50)
         response = name + " successfully sliced"
         loaded=True
+        publish('sliced','File sliced')
         return response
 
 @register
 def buildPrint():
     global loaded
+    print loaded
     if not loaded:
         return "Print will not happen"
     else:
-        sunrise.buildPrint(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':20000,'blankTime':500})
+        sunrise.buildBegin(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':3,'blankTime':0.5})
+        return "printed"
+
+@register
+def cancelBuild():
+    sunrise.cancelBuild()
+    return "cancelled"
+
 
 if __name__ == '__main__':
     sunrise=DLP_Printer()

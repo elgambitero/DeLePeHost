@@ -3,6 +3,9 @@ import Slicer.Slicer as Slicer
 import Projector.Projector as Projector
 import display as d
 import time
+import threading
+from rainbow import publish
+
 
 class DLP_Printer(object):
 
@@ -23,17 +26,37 @@ class DLP_Printer(object):
         #
         self.slicer = Slicer.Slicer()
 
+        self.building = False
 
-    def buildPrint(self,filename,params):
+    def buildBegin(self,filename,params):
+        self.building = True
+        print filename
         model=self.slicer.parseSVG(filename)
         self.mechComm.homeAxis()
+        t = threading.Thread(target=self.buildLoop, args=(model,params))
+        t.daemon = True
+        t.start()
+        publish('printStarted','Build began')
+        return "Begin printing"
+
+
+
+    def buildLoop(self,model,params):
+        self.projector.init_display()
         for layer in model:
+            if not self.building:
+                break
+            publish('printingLayer',len(layer))
             self.projector.expose(layer)
             time.sleep(params['exposeTime'])
             self.projector.blank()
             time.sleep(params['blankTime'])
             self.mechComm.moveAxis(self.buildAxis,3,200)
             self.mechComm.moveAxis(self.buildAxis,-2.95,200)
-            time.sleep(1000)
+            time.sleep(1)
         self.mechComm.moveAxis(self.buildAxis,20,200)
+        publish('printFinished',"Build finished")
         return False
+
+    def cancelBuild(self):
+        self.building = False
