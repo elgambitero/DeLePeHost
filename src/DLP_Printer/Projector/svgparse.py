@@ -10,40 +10,41 @@ import xml.etree.ElementTree as ET
 import display as d
 import time
 
-tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/sapphotest.svg')
-root = tree.getroot()
-model=()
-size=(float(root.attrib['width']),float(root.attrib['height']))
+def parseSVG(filename):
+    tree = ET.parse(filename)
+    root = tree.getroot()
+    model=()
+    size=(float(root.attrib['width']),float(root.attrib['height']))
 
 
-for layer in root:
-    laytuple=()
+    for layer in root:
+        laytuple=()
 
-    for contour in layer:
-        contuple=()
-#        print(contour.attrib['{http://slic3r.org/namespaces/slic3r}type'])
-        if contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'contour':
-            contuple=contuple+(1,)
-        elif contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'hole':
-            contuple=contuple+(0,)
-        coordinates=contour.attrib['points'].split()
+        for contour in layer:
+            contuple=()
+    #        print(contour.attrib['{http://slic3r.org/namespaces/slic3r}type'])
+            if contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'contour':
+                contuple=contuple+(1,)
+            elif contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'hole':
+                contuple=contuple+(0,)
+            coordinates=contour.attrib['points'].split()
 
-        Xlist=[]
-        Ylist=[]
+            Xlist=[]
+            Ylist=[]
 
-        for coordinate in coordinates:
-            Xlist.append(float(coordinate.split(',')[0]))
-            Ylist.append(float(coordinate.split(',')[1]))
+            for coordinate in coordinates:
+                Xlist.append(float(coordinate.split(',')[0]))
+                Ylist.append(float(coordinate.split(',')[1]))
 
-	#HARDCODE a resize for 40 micron pixels
-        XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
-        YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
+    	#HARDCODE a resize for 40 micron pixels
+            XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
+            YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
 
-        contuple = contuple + (XlistCorr,)
-        contuple = contuple + (YlistCorr,)
-        print(len(Xlist))
-        laytuple = laytuple + (contuple,)
-    model = model + (laytuple,)
+            contuple = contuple + (XlistCorr,)
+            contuple = contuple + (YlistCorr,)
+            print(len(Xlist))
+            laytuple = laytuple + (contuple,)
+        model = model + (laytuple,)
 
 d.init()
 

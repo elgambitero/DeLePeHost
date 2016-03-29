@@ -1,8 +1,7 @@
 import MechComm
 import subprocess
 import threading
-import cv2
-import numpy as np
+
 
 class Projector(object):
 
@@ -30,13 +29,14 @@ class Projector(object):
         return False
 
     def init_display(self):
-        img = np.zeros([self._resolution[1],self._resolution[0],3],dtype=np.uint8)
-        img.fill(0)
-        cv2.namedWindow("projector",cv2.WND_PROP_FULLSCREEN)
-        cv2.setWindowProperty("projector", cv2.WND_PROP_FULLSCREEN, cv2.cv.CV_WINDOW_FULLSCREEN)
-        cv2.imshow("projector",img)
-        key=cv2.waitKey(0)
+        d.init()
         return
+
+    def expose(layer):
+        d.expose(layer)
+
+    def blank():
+        d.blank()
 
     def get_resolution(self):
         cmd = ['xrandr']

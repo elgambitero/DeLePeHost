@@ -14,3 +14,40 @@ class Slicer(object):
             return outfile
         else:
             return False
+
+    def parseSVG(filename,pixelSize):
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        model=()
+        size=(float(root.attrib['width']),float(root.attrib['height']))
+
+
+        for layer in root:
+            laytuple=()
+
+            for contour in layer:
+                contuple=()
+        #        print(contour.attrib['{http://slic3r.org/namespaces/slic3r}type'])
+                if contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'contour':
+                    contuple=contuple+(1,)
+                elif contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'hole':
+                    contuple=contuple+(0,)
+                coordinates=contour.attrib['points'].split()
+
+                Xlist=[]
+                Ylist=[]
+
+                for coordinate in coordinates:
+                    Xlist.append(float(coordinate.split(',')[0]))
+                    Ylist.append(float(coordinate.split(',')[1]))
+
+        	#HARDCODE a resize for 40 micron pixels
+                XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
+                YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
+
+                contuple = contuple + (XlistCorr,)
+                contuple = contuple + (YlistCorr,)
+                print(len(Xlist))
+                laytuple = laytuple + (contuple,)
+            model = model + (laytuple,)
+        return model

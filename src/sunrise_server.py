@@ -33,6 +33,7 @@ def unlockMech():
 
 @register
 def sliceFile(name='name', content='content'):
+    global loaded
     try:
         os.mkdir('temp')
     except Exception:
@@ -43,14 +44,23 @@ def sliceFile(name='name', content='content'):
         file_.write(base64.b64decode(content))
         sunrise.slicer.file_to_svg(temp_stl_path,50)
         response = name + " successfully sliced"
+        loaded=True
         return response
 
+@register
+def buildPrint():
+    global loaded
+    if not loaded:
+        return "Print will not happen"
+    else:
+        sunrise.buildPrint(os.path.join(os.getcwd(),'temp','loaded.svg'))
 
 if __name__ == '__main__':
     sunrise=DLP_Printer()
+    global loaded=False
     try:
         os.rmdir("./temp")
     except:
         pass
-    
+
     run(host='0.0.0.0', webserver=True)
