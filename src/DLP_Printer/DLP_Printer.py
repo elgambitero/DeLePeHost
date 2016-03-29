@@ -1,6 +1,6 @@
-import MechComm
-import Slicer
-import Projector
+import Mechanical.MechComm
+import Slicer.Slicer
+import Projector.Projector
 
 class DLP_Printer(object):
 
