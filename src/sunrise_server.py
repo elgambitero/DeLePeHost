@@ -23,6 +23,12 @@ def moveAxis(amount=0):
     return response
 
 @register
+def homeAxis():
+    sunrise.mechComm.homeAxis()
+    response='homing axis'
+    return response
+
+@register
 def unlockMech():
     sunrise.mechComm.write("$x\r\n")
     answer = sunrise.mechComm.getData();
