@@ -49,10 +49,9 @@ class DLP_Printer(object):
             self.projector.expose(layer)
             time.sleep(params['exposeTime'])
             self.projector.blank()
-            time.sleep(params['blankTime'])
             self.mechComm.moveAxis(self.buildAxis,3,200)
             self.mechComm.moveAxis(self.buildAxis,-2.95,200)
-            time.sleep(1)
+            time.sleep(params['blankTime'])
         self.mechComm.moveAxis(self.buildAxis,20,200)
         publish('printFinished',"Build finished")
         return False

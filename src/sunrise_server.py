@@ -62,7 +62,7 @@ def buildPrint():
     if not loaded:
         return "Print will not happen"
     else:
-        sunrise.buildBegin(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':3,'blankTime':0.5})
+        sunrise.buildBegin(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':3,'blankTime':3})
         return "printed"
 
 @register

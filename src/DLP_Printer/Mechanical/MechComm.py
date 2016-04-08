@@ -24,16 +24,26 @@ class MechComm(serial.Serial):
         for port in ports:
             super(MechComm,self).__init__(port, 115200, timeout=2)
             self._ctrlXReset()
-            time.sleep(1)
-            self.version = self.getData()
-            if "Grbl 0.9j ['$' for help]" in self.version:
-                self.myport=port
-                print(">>> Success! GRBL Board found at port: "+port)
-                self.connected=True
-                break
+            self._DTRReset()
+            time.sleep(3)
+            for i in xrange(3):
+                self.version = self.getData()
+                if self.checkVersion():
+                    self.myport=port
+                    print(">>> Success! GRBL Board found at port: "+port)
+                    break
         if self.myport=='error':
             print(">>> Could not find GRBL controller")
         return
+
+
+    def checkVersion(self):
+        print self.version
+        if "Grbl 0.9j ['$' for help]" in self.version:
+            self.connected=True
+            return True
+        else:
+            return False
 
 #Courtesy of Irene Sanz Nieto <irene.sanz@bq.com> from web2board project
     def getData(self):
