@@ -32,7 +32,6 @@ class DLP_Printer(object):
         self.building = True
         print filename
         model=self.slicer.parseSVG(filename)
-        self.mechComm.homeAxis()
         t = threading.Thread(target=self.buildLoop, args=(model,params))
         t.daemon = True
         t.start()
