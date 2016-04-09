@@ -66,6 +66,13 @@ def buildPrint():
         return "printed"
 
 @register
+def buildTest():
+    sunrise.buildBegin(os.path.join(os.getcwd(),'test','test.svg'),{'exposeTime':3,'blankTime':3})
+    return "printed"
+
+
+
+@register
 def sliceTest():
     test_stl_path=os.path.join(os.getcwd(),'test','test.stl')
     print test_stl_path
