@@ -66,17 +66,14 @@ def buildPrint():
         return "printed"
 
 @register
-def buildTest():
+def sliceTest():
     test_stl_path=os.path.join(os.getcwd(),'test','test.stl')
     print test_stl_path
-    with open(test_stl_path, 'w') as file_:
-        import base64
-        file_.write(base64.b64decode(content))
-        sunrise.slicer.file_to_svg(test_stl_path,50)
-        response = name + " successfully sliced"
-        loaded=True
-        publish('sliced','File sliced')
-        return response
+    sunrise.slicer.file_to_svg(test_stl_path,50)
+    response = "Test successfully sliced"
+    loaded=True
+    publish('sliced','File sliced')
+    return response
 
 @register
 def cancelBuild():
