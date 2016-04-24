@@ -31,8 +31,7 @@ class DLP_Printer(object):
     def buildBegin(self,filename,params):
         self.building = True
         print filename
-        model=self.slicer.parseSVG(filename)
-        t = threading.Thread(target=self.buildLoop, args=(model,params))
+        t = threading.Thread(target=self.buildLoop, args=(filename,params))
         t.daemon = True
         t.start()
         publish('printStarted','Build began')
@@ -40,9 +39,10 @@ class DLP_Printer(object):
 
 
 
-    def buildLoop(self,model,params):
+    def buildLoop(self,filename,params):
         self.projector.init_display()
-        for layer in model:
+        layers=self.slicer.parseLayer(filename)
+        for layer in layers:
             if not self.building:
                 break
             publish('printingLayer',len(layer))
