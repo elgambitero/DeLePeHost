@@ -52,7 +52,7 @@ class DLP_Printer(object):
             self.mechComm.moveAxis(self.buildAxis,3,200)
             self.mechComm.moveAxis(self.buildAxis,-2.95,200)
             time.sleep(params['blankTime'])
-        self.mechComm.moveAxis(self.buildAxis,20,200)
+        self.mechComm.moveAxis(self.buildAxis,60,200)
         publish('printFinished',"Build finished")
         return False
 

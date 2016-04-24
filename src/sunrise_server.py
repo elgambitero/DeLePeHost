@@ -56,6 +56,24 @@ def sliceFile(name='name', content='content'):
         return response
 
 @register
+def loadSVG(name='name', content='content'):
+    global loaded
+    try:
+        os.mkdir('temp')
+    except Exception:
+        pass
+    temp_stl_path=os.path.join(os.getcwd(),'temp','loaded.svg')
+    print temp_stl_path
+    with open(temp_stl_path, 'w') as file_:
+        import base64
+        file_.write(base64.b64decode(content))
+        response = name + "SVG received successfully"
+        loaded=True
+        publish('SVGloaded','SVG loaded')
+        return response
+
+
+@register
 def buildPrint():
     global loaded
     print loaded
@@ -66,8 +84,19 @@ def buildPrint():
         return "printed"
 
 @register
+def sweepPrint():
+    global loaded
+    print loaded
+    if not loaded:
+        return "Print will not happen"
+    else:
+        sunrise.buildBegin(os.path.join(os.getcwd(),'temp','loaded.svg'),{'exposeTime':0,'blankTime':0})
+        return "printed"
+
+
+@register
 def buildTest():
-    sunrise.buildBegin(os.path.join(os.getcwd(),'test','test.svg'),{'exposeTime':3,'blankTime':3})
+    sunrise.buildBegin(os.path.join(os.getcwd(),'test','test.svg'),{'exposeTime':20,'blankTime':3})
     return "printed"
 
 
