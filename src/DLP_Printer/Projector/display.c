@@ -9,13 +9,16 @@
 
 //#define DEBUG
 
-static int width, height; 
+static int width, height;
 
 
 static PyObject *display_init(PyObject *self, PyObject *args){ //do this properly
 //	int width, height;
 	init(&width, &height);
 	Start(width,height);
+	#ifdef DEBUG
+		printf("%dx%d\r\n",width,height);
+	#endif
   Py_RETURN_NONE;
 }
 
@@ -54,8 +57,6 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		long csize; //holds the number of points
 		PyObject *Xlist; //holds the x coordinates of the points
 		PyObject *Ylist; //holds the y coordinates of the points
-		double *xpoints; //C array that holds the x coordinates
-		double *ypoints; //C array that holds the y coordinates
 		#ifdef DEBUG
 			PyRun_SimpleString("print('contour loaded')");
 		#endif
@@ -87,8 +88,8 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		#endif
 
 		//Turn the tuples into c arrays
-		xpoints = (double *) malloc(sizeof(double)*csize);
-		ypoints = (double *) malloc(sizeof(double)*csize);
+		float xpoints[csize];
+		float ypoints[csize];
 
 		long j;//iterating variable
 		for(j = 0;j<csize;j++){
@@ -107,8 +108,6 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			}
 			//Py_DECREF(ypoint);
 			if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
-				free(xpoints);
-				free(ypoints);
 				PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
 				if(xpoint == NULL || ypoint == NULL){
 					PyErr_SetString(PyExc_TypeError, "something is null");
@@ -116,19 +115,25 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 				return NULL;
 			}
 			//put the point into the array.
-			xpoints[j] = PyFloat_AsDouble(xpoint);
-			ypoints[j] = PyFloat_AsDouble(ypoint);
+			xpoints[j] = (float) PyFloat_AsDouble(xpoint);
+			ypoints[j] = (float) PyFloat_AsDouble(ypoint);
 			#ifdef DEBUG
 				printf("Point Loaded\r\n");
 			#endif
 		}
+
 		//construct the image
+
+		VGfloat vgcolor[4];
+
 		if(color == 1){
-			Fill(255,255,255,1);
+			RGBA(255,255,255,1,vgcolor);
 		}
 		else{
-			Fill(0,0,0,1);
+			RGBA(0,0,0,1,vgcolor);
 		}
+
+		setfill(vgcolor);
 
 		#ifdef DEBUG
 			int a;
@@ -136,32 +141,44 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 				printf("%d of %d: %f\r\n",a,sizeof(xpoints),xpoints[a]);
 			}
 		#endif
-
+		/*
 		//turn them into floats, because that's what polygon needs
 		float x[csize];
 		float y[csize];
 
 
 		//this could be done in a more elegant way...
-		int b;
+		long b;
 		for(b=0;b<csize;b++){
 			x[b]=(float)xpoints[b];
 			y[b]=(float)ypoints[b];
 		}
-
+		*/
 		#ifdef DEBUG
 			int e;
 			for(e=0;e<4;e++){
 				printf("%f\r\n",x[e]);
 			}
 		#endif
-		Polygon(x,y,csize);
+
+		VGfloat points[csize * 2];
+		VGPath path = newpath();
+		interleave(xpoints,ypoints,csize,points);
+		VGubyte segments[csize]; //{VG_MOVE_TO_ABS , VG_LINE_TO} and so on.
+		long iter;
+		segments[0]= VG_MOVE_TO_ABS;
+		for(iter=1;iter<csize;iter++){
+			segments[iter] = VG_LINE_TO;
+		}
+		vgAppendPathData(path,csize,segments,points);
+		vgDrawPath(path,VG_FILL_PATH);
+		vgDestroyPath(path);
+
+		//Polygon(xpoints,ypoints,csize);
+
 		#ifdef DEBUG
 			printf("first x coordinate is %f\r\n",x[0]);
 		#endif
-		//dispose the memory for xpoints and ypoints maybe??
-		free(xpoints);
-		free(ypoints);
 	}
 //All contours loaded
 
