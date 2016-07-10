@@ -17,7 +17,7 @@ class Slicer(object):
         else:
             return False
 
-    def parseSVG(self,filename):
+    def parseSVG(self,filename,pixel):
         print "Try to parse"
         tree = ET.parse(filename)
         root = tree.getroot()
@@ -45,8 +45,8 @@ class Slicer(object):
                     Ylist.append(float(coordinate.split(',')[1]))
 
         	#HARDCODE a resize for 40 micron pixels
-                XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
-                YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
+                XlistCorr=[640+(1000.0/pixel)*(x-size[0]/2) for x in Xlist]
+                YlistCorr=[400+(1000.0/pixel)*(x-size[1]/2) for x in Ylist]
 
                 contuple = contuple + (XlistCorr,)
                 contuple = contuple + (YlistCorr,)

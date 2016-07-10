@@ -19,7 +19,7 @@ class DLP_Printer(object):
         self.buildAxis="Y"
 
         # It has a projector with a 1280x800 resolution. It is mounted on a
-        # carriage that allows continous pixel sizes from 45 um, to 70 um. That
+        # carriage that allows continous pixel sizes from 40 um, to 70 um. That
         #axis is called X.
         self.projector = Projector.Projector(('continous', 40, 70), "X", self.mechComm)
 
@@ -31,7 +31,7 @@ class DLP_Printer(object):
     def buildBegin(self,filename,params):
         self.building = True
         print filename
-        model=self.slicer.parseSVG(filename)
+        model=self.slicer.parseSVG(filename,60)
         t = threading.Thread(target=self.buildLoop, args=(model,params))
         t.daemon = True
         t.start()

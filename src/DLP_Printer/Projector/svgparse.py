@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import display as d
 import time
 
-def parseSVG(filename):
+def parseSVG(filename,pixel):
     tree = ET.parse(filename)
     root = tree.getroot()
     model=()
@@ -37,8 +37,8 @@ def parseSVG(filename):
                 Ylist.append(float(coordinate.split(',')[1]))
 
     	#HARDCODE a resize for 40 micron pixels
-            XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
-            YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
+            XlistCorr=[640+(1000.0/pixel)*(x-size[0]/2) for x in Xlist]
+            YlistCorr=[400+(1000.0/pixel)*(x-size[1]/2) for x in Ylist]
 
             contuple = contuple + (XlistCorr,)
             contuple = contuple + (YlistCorr,)
